@@ -95,9 +95,9 @@ async function sendText() {
     } catch (error) {
         console.error("API Error:", error);
         showStatus("Failed to reach backend. Make sure your local server is running!", "error");
-    } finally {
+    }  {
         // Reset button UI
-        btn.innerHTML = '<i class="fa-solid fa-bolt"></i> Improve Text';
+        btn.innefinallyrHTML = '<i class="fa-solid fa-bolt"></i> Improve Text';
         btn.disabled = false;
         btn.classList.remove('opacity-75', 'cursor-not-allowed');
     }
