@@ -1,7 +1,7 @@
 let isRecording = false;
 let recognition;
 
-// Initialize Speech Recognition
+// ================= VOICE INPUT =================
 function startVoice() {
     if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
         alert("Your browser does not support voice input");
@@ -11,8 +11,7 @@ function startVoice() {
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
     recognition = new SpeechRecognition();
     recognition.lang = "en-US";
-    
-    // UI Update: Show listening state
+
     const btn = document.getElementById('speakBtn');
     btn.innerHTML = '<i class="fa-solid fa-microphone-lines"></i> Listening...';
     btn.classList.add('recording', 'text-white', 'border-red-500');
@@ -27,11 +26,10 @@ function startVoice() {
         stopRecordingUI();
     };
 
-    recognition.onerror = function(event) {
-        console.error("Speech recognition error", event);
+    recognition.onerror = function() {
         stopRecordingUI();
     };
-    
+
     recognition.onend = function() {
         stopRecordingUI();
     };
@@ -44,10 +42,11 @@ function stopRecordingUI() {
     btn.classList.add('text-slate-600', 'bg-white', 'hover:bg-blue-50');
 }
 
+// ================= MAIN FUNCTION =================
 async function sendText() {
     const text = document.getElementById("inputText").value.trim();
     const model = document.getElementById("modelSelect").value;
-    
+
     if (!text) {
         showStatus("Please enter some text first! ✍️", "error");
         return;
@@ -55,14 +54,16 @@ async function sendText() {
 
     const btn = document.getElementById('improveBtn');
 
-    // Loading state
+    // Loading UI
     btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Analyzing...';
     btn.disabled = true;
     btn.classList.add('opacity-75', 'cursor-not-allowed');
 
     showStatus("Processing with " + model + "...", "loading");
-    document.getElementById("result").classList.add('hidden');
-    document.getElementById("result").classList.remove('fade-in');
+
+    const resultDiv = document.getElementById("result");
+    resultDiv.classList.add('hidden');
+    resultDiv.classList.remove('fade-in');
 
     try {
         const response = await fetch("https://tone-ai.onrender.com/improve", {
@@ -70,7 +71,7 @@ async function sendText() {
             headers: {
                 "Content-Type": "application/json"
             },
-            body: JSON.stringify({ 
+            body: JSON.stringify({
                 text: text,
                 model: model
             })
@@ -80,14 +81,15 @@ async function sendText() {
 
         const data = await response.json();
 
-        document.getElementById("result").classList.remove('hidden');
-        document.getElementById("result").classList.add('fade-in');
+        // ✅ SAFE UI UPDATE (prevents crash)
+        document.getElementById("corrected").innerText = data?.corrected ?? "No corrections needed.";
+        document.getElementById("mistakes").innerText = data?.mistakes ?? "None detected.";
+        document.getElementById("formal").innerText = data?.formal ?? text;
+        document.getElementById("polite").innerText = data?.polite ?? text;
+        document.getElementById("friendly").innerText = data?.friendly ?? text;
 
-        document.getElementById("corrected").innerText = data.corrected || "No corrections needed.";
-        document.getElementById("mistakes").innerText = data.mistakes || "None detected.";
-        document.getElementById("formal").innerText = data.formal || text;
-        document.getElementById("polite").innerText = data.polite || text;
-        document.getElementById("friendly").innerText = data.friendly || text;
+        resultDiv.classList.remove('hidden');
+        resultDiv.classList.add('fade-in');
 
         showStatus("Done", "success");
 
@@ -96,44 +98,55 @@ async function sendText() {
         showStatus("Failed to reach backend!", "error");
 
     } finally {
-        // ✅ ALWAYS runs → fixes spinner issue
-        const btn = document.getElementById('improveBtn');
-        btn.innerHTML = '<i class="fa-solid fa-bolt"></i> Improve Text';
-        btn.disabled = false;
-        btn.classList.remove('opacity-75', 'cursor-not-allowed');
+        // ✅ GUARANTEED RESET
+        setTimeout(() => {
+            btn.innerHTML = '<i class="fa-solid fa-bolt"></i> Improve Text';
+            btn.disabled = false;
+            btn.classList.remove('opacity-75', 'cursor-not-allowed');
+        }, 200); // small delay ensures UI updates smoothly
     }
 }
+
+// ================= STATUS =================
 function showStatus(message, type) {
     const status = document.getElementById("status");
 
     status.classList.remove("hidden");
-
-    // Reset styles
     status.className = "text-sm font-medium text-center py-2 rounded-lg";
 
     if (type === "loading") {
         status.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> ${message}`;
         status.classList.add("text-blue-600", "bg-blue-50");
-    } 
+    }
     else if (type === "success") {
         status.innerHTML = `✅ ${message}`;
         status.classList.add("text-green-600", "bg-green-50");
 
-        // Auto hide after 2 sec
         setTimeout(() => {
             status.classList.add("hidden");
         }, 2000);
-    } 
+    }
     else if (type === "error") {
         status.innerHTML = `❌ ${message}`;
         status.classList.add("text-red-600", "bg-red-50");
     }
 }
 
-// Copy functionality added for better UX
+// ================= COPY =================
 function copyText(elementId) {
     const text = document.getElementById(elementId).innerText;
-    const fallbackCopy = (textToCopy) => {
+
+    if (!text) return;
+
+    if (navigator.clipboard && window.isSecureContext) {
+        navigator.clipboard.writeText(text)
+            .then(() => showStatus("Copied to clipboard! 📋", "success"))
+            .catch(() => fallbackCopy(text));
+    } else {
+        fallbackCopy(text);
+    }
+
+    function fallbackCopy(textToCopy) {
         const textArea = document.createElement("textarea");
         textArea.value = textToCopy;
         document.body.appendChild(textArea);
@@ -141,17 +154,9 @@ function copyText(elementId) {
         try {
             document.execCommand('copy');
             showStatus("Copied to clipboard! 📋", "success");
-        } catch (err) {
+        } catch {
             showStatus("Failed to copy.", "error");
         }
         document.body.removeChild(textArea);
-    };
-
-    if (navigator.clipboard && window.isSecureContext) {
-        navigator.clipboard.writeText(text).then(() => {
-            showStatus("Copied to clipboard! 📋", "success");
-        }).catch(() => fallbackCopy(text));
-    } else {
-        fallbackCopy(text);
     }
 }
