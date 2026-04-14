@@ -65,7 +65,7 @@ async function sendText() {
 
     try {
         // Call Your Local Backend
-        const response = await fetch("http://127.0.0.1:8000/improve", {
+        const response = await fetch("https://tone-ai.onrender.com/improve", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
