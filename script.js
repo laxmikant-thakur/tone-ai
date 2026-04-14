@@ -53,8 +53,9 @@ async function sendText() {
         return;
     }
 
-    // UI Update: Show Loading State
     const btn = document.getElementById('improveBtn');
+
+    // Loading state
     btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Analyzing...';
     btn.disabled = true;
     btn.classList.add('opacity-75', 'cursor-not-allowed');
@@ -64,7 +65,6 @@ async function sendText() {
     document.getElementById("result").classList.remove('fade-in');
 
     try {
-        // Call Your Local Backend
         const response = await fetch("https://tone-ai.onrender.com/improve", {
             method: "POST",
             headers: {
@@ -80,7 +80,6 @@ async function sendText() {
 
         const data = await response.json();
 
-        // Show Results in the Tailwind UI
         document.getElementById("result").classList.remove('hidden');
         document.getElementById("result").classList.add('fade-in');
 
@@ -94,28 +93,40 @@ async function sendText() {
 
     } catch (error) {
         console.error("API Error:", error);
-        showStatus("Failed to reach backend. Make sure your local server is running!", "error");
-    }  {
-        // Reset button UI
-        btn.innefinallyrHTML = '<i class="fa-solid fa-bolt"></i> Improve Text';
+        showStatus("Failed to reach backend!", "error");
+
+    } finally {
+        // ✅ ALWAYS runs → fixes spinner issue
+        const btn = document.getElementById('improveBtn');
+        btn.innerHTML = '<i class="fa-solid fa-bolt"></i> Improve Text';
         btn.disabled = false;
         btn.classList.remove('opacity-75', 'cursor-not-allowed');
     }
 }
-
 function showStatus(message, type) {
-    const statusEl = document.getElementById('status');
-    statusEl.innerText = message;
-    statusEl.classList.remove('hidden', 'text-blue-600', 'text-red-600', 'text-green-600', 'bg-blue-50', 'bg-red-50', 'bg-green-50');
-    
-    if (type === 'loading') {
-        statusEl.classList.add('text-blue-600', 'bg-blue-50', 'block');
-    } else if (type === 'error') {
-        statusEl.classList.add('text-red-600', 'bg-red-50', 'block');
-        setTimeout(() => statusEl.classList.add('hidden'), 4000);
-    } else if (type === 'success') {
-        statusEl.classList.add('text-green-600', 'bg-green-50', 'block');
-        setTimeout(() => statusEl.classList.add('hidden'), 3000);
+    const status = document.getElementById("status");
+
+    status.classList.remove("hidden");
+
+    // Reset styles
+    status.className = "text-sm font-medium text-center py-2 rounded-lg";
+
+    if (type === "loading") {
+        status.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> ${message}`;
+        status.classList.add("text-blue-600", "bg-blue-50");
+    } 
+    else if (type === "success") {
+        status.innerHTML = `✅ ${message}`;
+        status.classList.add("text-green-600", "bg-green-50");
+
+        // Auto hide after 2 sec
+        setTimeout(() => {
+            status.classList.add("hidden");
+        }, 2000);
+    } 
+    else if (type === "error") {
+        status.innerHTML = `❌ ${message}`;
+        status.classList.add("text-red-600", "bg-red-50");
     }
 }
 
