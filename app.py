@@ -2,6 +2,10 @@ from fastapi import FastAPI
 from pydantic import BaseModel
 import requests
 from fastapi.middleware.cors import CORSMiddleware
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
 
 app = FastAPI()
 
@@ -19,7 +23,7 @@ class InputText(BaseModel):
     model: str
 
 # 🔑 Put your real API key here
-OPENROUTER_API_KEY = "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"
+OPENROUTER_API_KEY = os.getenv("OPENROUTER_API_KEY")
 
 # 🔧 OpenRouter API function
 def call_openrouter(prompt):

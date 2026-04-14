@@ -119,6 +119,7 @@ function showStatus(message, type) {
     }
 }
 
+// Copy functionality added for better UX
 function copyText(elementId) {
     const text = document.getElementById(elementId).innerText;
     const fallbackCopy = (textToCopy) => {
