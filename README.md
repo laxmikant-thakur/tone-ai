@@ -33,101 +33,106 @@ An AI-powered web application that improves user-written text by correcting gram
 ## 📁 Project Structure
 
 
-tone-ai-project/
-│
-├── app.py # FastAPI backend
-├── index.html # UI
-├── style.css # Styling
-├── script.js # Frontend logic
-├── .env # API keys (not pushed to GitHub)
-├── .gitignore # Ignores sensitive files
-└── README.md
+**tone-ai-project**
+  - app.py ---------------------------------------# FastAPI backend
+  - index.html------------------------------------# UI
+  - style.css--------------------------------------# Styling
+  - script.js---------------------------------------# Frontend logic
+  - .env------------------------------------------# API keys (not pushed to GitHub)
+  - .gitignore------------------------------------# Ignores sensitive files
+  - README.md
 
 
----
 
 ## ⚙️ Setup Instructions
-
 ### 1️⃣ Clone the repository
-
-```bash
+```
 git clone https://github.com/laxmikant-thakur/tone-ai
 cd tone-ai-project
+```
+
 ### 2️⃣ Install dependencies
+```
 pip install fastapi uvicorn requests python-dotenv
+```
+
 ### 3️⃣ Setup Environment Variables
-
 Create a .env file in the root directory:
-
+```
 OPENROUTER_API_KEY=your_api_key_here
+```
+
 ### 4️⃣ Setup .gitignore
-
-Make sure .env is included:
-
+Make sure .env is included:<br>
 .env
+
 ### 5️⃣ Run Ollama (Local Model)
-
 Install Ollama and run:
-
+```
 ollama run llama3
-### 6️⃣ Start Backend Server
-uvicorn app:app --reload
-### 7️⃣ Run Frontend
+```
 
-Open index.html in your browser
+### 6️⃣ Start Backend Server
+```
+uvicorn app:app --reload
+```
+
+### 7️⃣ Run Frontend
+- Open index.html in your browser
 
 ### 🧪 How to Use
-Enter your sentence
+- Enter your sentence
 
-Select model:
-Ollama (Local)
-OpenRouter (Cloud)
+- Select model:
+  - Ollama (Local)
+  - OpenRouter (Cloud)
 
-Click Improve
-View results:
-Corrected sentence
-Mistakes
-Formal version
-Polite version
-Friendly version
+- Click Improve
+- View results:
+
+- Corrected sentence
+- Mistakes
+- Formal version
+- Polite version
+- Friendly version
+
 ### 🔐 Security
-API keys are stored in .env
-.env is excluded using .gitignore
-No sensitive data is exposed in frontend
+- API keys are stored in .env <br>
+- .env is excluded using .gitignore <br>
+- No sensitive data is exposed in frontend
+
 ### 🎯 Example
-Input:
+- Input:<br>
 mam i want to submit assignment tomorrow because i was sick
 
-Output:
-Corrected sentence
-Grammar mistakes
-Formal tone
-Polite tone
-Friendly tone
+
+- Output: <br>
+  -Corrected sentence
+  -Grammar mistakes
+  -Formal tone
+  -Polite tone
+  -Friendly tone
 
 
 ### 🔥 Future Improvements
-⏳ Loading spinner
-📋 Copy-to-clipboard feature
-🌙 Dark mode
-🔄 Auto model fallback
-⚡ Streaming responses
-🧠 Learning Outcome
+- ⏳ Loading spinner
+- 📋 Copy-to-clipboard feature
+- 🌙 Dark mode
+- 🔄 Auto model fallback
+- ⚡ Streaming responses
+- 🧠 Learning Outcome
 
 ### This project demonstrates:
-
-Full-stack AI integration
-Secure API handling
-Multi-model architecture (Local + Cloud)
-FastAPI backend development
-Real-world AI application design
+- Full-stack AI integration
+- Secure API handling
+- Multi-model architecture (Local + Cloud)
+- FastAPI backend development
+- Real-world AI application design
 
 
 ### 👨‍💻 Author
-
 Laxmikant Thakur
 
 
 ### ⭐ Support
-
 If you found this project useful, consider giving it a star ⭐
